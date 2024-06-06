@@ -1,0 +1,20 @@
+# Usar uma imagem oficial do Python como base
+FROM python:3.10-slim
+
+# Definir variáveis de ambiente
+ENV PYTHONDONTWRITEBYTECODE 1
+
+# Criar um diretório de trabalho
+WORKDIR /app
+
+# Instalar dependências do Python
+COPY requirements.txt .
+
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+# Copiar o código do projeto
+COPY . .
+
+# Comando para rodar o servidor de desenvolvimento
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
