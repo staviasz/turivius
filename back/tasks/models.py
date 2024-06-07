@@ -15,7 +15,7 @@ class Category(Enum):
 class Task(models.Model):
     title = models.CharField(max_length=30)
     description = models.TextField()
-    execute_date = models.DateTimeField()
+    execute_date = models.DateField()
     category = models.CharField(max_length=30, choices=[(tag, tag.value) for tag in Category])
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
