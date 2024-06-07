@@ -78,6 +78,35 @@ class TaskView(View):
 
         return JsonResponse(task_data, status=200)
 
+    def delete(self, request, task_id):
+        try:
+            task = Task.objects.get(id=task_id)
+        except Task.DoesNotExist:
+            return JsonResponse({"message": "Tarefa não encontrada"}, status=404)
+
+        user = request.user
+        if task.user != user:
+            return JsonResponse({"message": "Tarefa pertencendo a outro usuário"}, status=401)
+
+        task.delete()
+
+        return JsonResponse({},status=204)
+
+    def get(self, request):
+        user = request.user
+        tasks = Task.objects.filter(user=user)
+        tasks_data = [{
+            "id": task.id,
+            "title": task.title,
+            "description": task.description,
+            "execute_date": task.execute_date,
+            "category": task.category,
+            "completed": task.completed,
+            "user_id": task.user.id
+        } for task in tasks]
+
+        return JsonResponse(tasks_data, safe=False)
+    
     def _clean_data(self, action, **kwargs):
         validators = {
         'title': self._clean_title,

@@ -1,10 +1,7 @@
-from datetime import datetime
 from django.test import TestCase
 from django.urls import reverse
 from django.test import Client
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
-
 from tasks.models import Task
 
 
