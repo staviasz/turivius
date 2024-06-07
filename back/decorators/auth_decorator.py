@@ -1,6 +1,8 @@
 from functools import wraps
 from django.http import JsonResponse
 
+
+# Decorator para proteger as rotas que precisam de login
 def authentication_required(view_func):
     @wraps(view_func)
     def wrapped_view(request, *args, **kwargs):

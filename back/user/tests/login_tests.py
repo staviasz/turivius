@@ -18,11 +18,13 @@ class UserViewLoginTestCase(TestCase):
         )
 
     def test_login_success(self):
+        # Faz requisição para rota de login
         response = self.client.post(reverse('user-login'), {
             'email': 'john.doe@example.com',
             'password': 'Password!23'
         })
 
+        # Verificar se o código de status é 200 (ok) e se os dados contém email e id do usuário
         data = response.json()
         self.assertEqual(response.status_code, 200)
         self.assertIn('id', data)
@@ -35,6 +37,7 @@ class UserViewLoginTestCase(TestCase):
             'password': 'Password!234'
         })
 
+        # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de credenciais inválidas
         data = response.json()
         self.assertEqual(response.status_code, 400)
         self.assertEqual(data, {"message": "Credenciais inválidas"})
@@ -46,6 +49,7 @@ class UserViewLoginTestCase(TestCase):
             'password': 'Password!23'
         })
 
+        # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de email obrigatório
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('error', data)
@@ -57,6 +61,7 @@ class UserViewLoginTestCase(TestCase):
             'password': 'Password!23'
         })
 
+        # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de email inválido
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('error', data)
@@ -68,6 +73,7 @@ class UserViewLoginTestCase(TestCase):
             'email': 'john@example.com',
         })
 
+        # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de senha obrigatória
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('error', data)
@@ -80,6 +86,7 @@ class UserViewLoginTestCase(TestCase):
             'password': 'pwd'
         })
 
+        # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de senha inválida
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('error', data)

@@ -15,6 +15,7 @@ data_task = {
 
 class CreateTaskTest(TestCase):
     def setUp(self):
+        """Cria um usuário e faz login"""
         self.client = Client()
         self.user = User.objects.create_user(
             first_name='John Doe',
@@ -30,7 +31,7 @@ class CreateTaskTest(TestCase):
         # Fazer uma solicitação POST para a visualização protegida
         response = self.client.post(reverse('create-task'), data=data_task)
 
-        # Verificar se a solicitação foi bem-sucedida
+        # Verificar se a solicitação foi bem-sucedida e a task foi criada
         data = response.json()
         self.assertEqual(response.status_code, 201)
         self.assertEqual(data['title'], data_task['title'])
@@ -42,10 +43,9 @@ class CreateTaskTest(TestCase):
         new_data = {**data_task}
         del new_data['description']
 
-        # Fazer uma solicitação POST para a visualização protegida
         response = self.client.post(reverse('create-task'), data=new_data)
 
-        # Verificar se a solicitação foi bem-sucedida
+        # Verificar se a solicitação retornou um erro de validação para o campo description
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {'errors': {'description': "O campo 'description' é obrigatório"}})
     
@@ -53,10 +53,9 @@ class CreateTaskTest(TestCase):
         new_data = {**data_task}
         new_data['description'] = 'a' * 256
 
-        # Fazer uma solicitação POST para a visualização protegida
         response = self.client.post(reverse('create-task'), data=new_data)
 
-        # Verificar se a solicitação foi bem-sucedida
+        # Verificar se a solicitação retornou um erro de validação para o campo description
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {'errors': {'description': "O campo 'description' pode conter no maximo 255 caracteres"}})
     
@@ -64,10 +63,9 @@ class CreateTaskTest(TestCase):
         new_data = {**data_task}
         del new_data['title']
 
-        # Fazer uma solicitação POST para a visualização protegida
         response = self.client.post(reverse('create-task'), data=new_data)
 
-        # Verificar se a solicitação foi bem-sucedida
+        # Verificar se a solicitação retornou um erro de validação para o campo title
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {'errors': {'title': "O campo 'title' é obrigatório"}})
     
@@ -75,10 +73,9 @@ class CreateTaskTest(TestCase):
         new_data = {**data_task}
         new_data['title'] = 'a' * 256
 
-        # Fazer uma solicitação POST para a visualização protegida
         response = self.client.post(reverse('create-task'), data=new_data)
 
-        # Verificar se a solicitação foi bem-sucedida
+        # Verificar se a solicitação retornou um erro de validação para o campo title
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {'errors': {'title': "O campo 'title' pode conter no maximo 30 caracteres"}})
 
@@ -86,10 +83,9 @@ class CreateTaskTest(TestCase):
         new_data = {**data_task}
         del new_data['category']
 
-        # Fazer uma solicitação POST para a visualização protegida
         response = self.client.post(reverse('create-task'), data=new_data)
 
-        # Verificar se a solicitação foi bem-sucedida
+        # Verificar se a solicitação retornou um erro de validação para o campo category
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {'errors': {'category': "O campo 'category' é obrigatório"}})
     
@@ -97,10 +93,9 @@ class CreateTaskTest(TestCase):
         new_data = {**data_task}
         new_data['category'] = 'invalid'
 
-        # Fazer uma solicitação POST para a visualização protegida
         response = self.client.post(reverse('create-task'), data=new_data)
 
-        # Verificar se a solicitação foi bem-sucedida
+        # Verificar se a solicitação retornou um erro de validação para o campo category
         self.assertEqual(response.status_code, 400)
         expected_error = "O campo 'category' deve ter um dos valores ['study','work', 'home', 'leisure', 'food']"
         actual_error = response.json()['errors']['category']
@@ -111,10 +106,9 @@ class CreateTaskTest(TestCase):
         new_data = {**data_task}
         del new_data['execute_date']
 
-        # Fazer uma solicitação POST para a visualização protegida
         response = self.client.post(reverse('create-task'), data=new_data)
 
-        # Verificar se a solicitação foi bem-sucedida
+        # Verificar se a solicitação retornou um erro de validação para o campo execute_date
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {'errors': {'execute_date': "O campo 'execute_date' é obrigatório"}})
 
@@ -122,10 +116,9 @@ class CreateTaskTest(TestCase):
         new_data = {**data_task}
         new_data['execute_date'] = '2020-01-01'
 
-        # Fazer uma solicitação POST para a visualização protegida
         response = self.client.post(reverse('create-task'), data=new_data)
 
-        # Verificar se a solicitação foi bem-sucedida
+        # Verificar se a solicitação retornou um erro de validação para o campo execute_date
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {'errors': {'execute_date': "O campo 'execute_date' deve ser uma data futura"}})
 
@@ -133,20 +126,19 @@ class CreateTaskTest(TestCase):
         new_data = {**data_task}
         new_data['execute_date'] = '01-01-2020'
 
-        # Fazer uma solicitação POST para a visualização protegida
         response = self.client.post(reverse('create-task'), data=new_data)
 
-        # Verificar se a solicitação foi bem-sucedida
+        # Verificar se a solicitação retornou um erro de validação para o campo execute_date
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json(), {'errors': {'execute_date': "O formato da data deve ser 'YYYY-MM-DD'"}})
 
     def test_create_task_unauthorized(self): 
         self.client.logout()
-        # Criar a solicitação POST sem autenticação
+        
         response = self.client.post(reverse('create-task'), data=data_task)
         
         # Verificar se o código de status é 401 (não autorizado) messagem de erro
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.json(), {'message': 'Autenticação necessária'})
 
-    
+ 

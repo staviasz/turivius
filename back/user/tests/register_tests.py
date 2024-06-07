@@ -10,12 +10,14 @@ class UserViewRegisterTestCase(TestCase):
         self.client = Client()
 
     def test_register_success(self):
+        # Faz requisição para rota de registro
         response = self.client.post(reverse('user-register'), {
             'first_name': 'John Doe',
             'email': 'john.doe@example.com',
             'password': 'Password!23'
         })
 
+        # Verificar se o código de status é 201 (created) e se os dados contém o id do usuário
         self.assertEqual(response.status_code, 201)
         data = response.json()
         self.assertIn('id', data)
@@ -23,14 +25,17 @@ class UserViewRegisterTestCase(TestCase):
         self.assertTrue(User.objects.filter(email='john.doe@example.com').exists())
 
     def test_register_email_in_use(self):
+        # Criando um usuário
         User.objects.create(first_name='Jane Doe', email='jane.doe@example.com', password='Password!23')
-
+        
+        # Faz requisição para rota de registro com email em uso
         response = self.client.post(reverse('user-register'), {
             'first_name': 'John Doe',
             'email': 'jane.doe@example.com',
             'password': 'Password!23'
         })
 
+        # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de email em uso
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('message', data)
@@ -42,6 +47,7 @@ class UserViewRegisterTestCase(TestCase):
             'password': 'Password!23'
         })
 
+        # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de nome obrigatório
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('error', data)
@@ -54,6 +60,7 @@ class UserViewRegisterTestCase(TestCase):
             'password': 'Password!23'
         })
 
+        # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de nome inválido
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('error', data)
@@ -65,7 +72,7 @@ class UserViewRegisterTestCase(TestCase):
             'password': 'Password!23'
         })
         
-
+        # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de email obrigatório
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('error', data)
@@ -78,7 +85,7 @@ class UserViewRegisterTestCase(TestCase):
             'password': 'Password!23'
         })
         
-
+        # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de email inválido
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('error', data)
@@ -90,7 +97,7 @@ class UserViewRegisterTestCase(TestCase):
             'email': 'john@example.com',
         })
         
-
+        # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de senha obrigatória
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('error', data)
@@ -103,7 +110,7 @@ class UserViewRegisterTestCase(TestCase):
             'password': 'pwd'
         })
         
-
+        # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de senha inválida
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('error', data)
