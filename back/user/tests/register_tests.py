@@ -39,7 +39,7 @@ class UserViewRegisterTestCase(TestCase):
         self.assertEqual(response.status_code, 400)
         data = response.json()
         self.assertIn('message', data)
-        self.assertEqual(data['message'], 'Email em uso')
+        self.assertEqual(data['message'], 'Este e-mail já está em uso.')
 
     def test_required_first_name(self):
         response = self.client.post(reverse('user-register'), {
@@ -50,8 +50,7 @@ class UserViewRegisterTestCase(TestCase):
         # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de nome obrigatório
         self.assertEqual(response.status_code, 400)
         data = response.json()
-        self.assertIn('error', data)
-        self.assertEqual(data['error']['first_name'], 'O campo nome é obrigatório')
+        self.assertEqual(data['first_name'], ['O campo nome é obrigatório'])
     
     def test_invalid_first_name(self):
         response = self.client.post(reverse('user-register'), {
@@ -63,8 +62,7 @@ class UserViewRegisterTestCase(TestCase):
         # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de nome inválido
         self.assertEqual(response.status_code, 400)
         data = response.json()
-        self.assertIn('error', data)
-        self.assertEqual(data['error']['first_name'], 'O nome não pode conter números ou caracteres especiais')
+        self.assertEqual(data['first_name'], ['O nome não pode conter números ou caracteres especiais'])
 
     def test_required_email(self):
         response = self.client.post(reverse('user-register'), {
@@ -75,8 +73,7 @@ class UserViewRegisterTestCase(TestCase):
         # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de email obrigatório
         self.assertEqual(response.status_code, 400)
         data = response.json()
-        self.assertIn('error', data)
-        self.assertEqual(data['error']['email'], 'O campo email é obrigatório')
+        self.assertEqual(data['email'], ['O campo email é obrigatório'])
 
     def test_invalid_email(self):
         response = self.client.post(reverse('user-register'), {
@@ -88,8 +85,7 @@ class UserViewRegisterTestCase(TestCase):
         # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de email inválido
         self.assertEqual(response.status_code, 400)
         data = response.json()
-        self.assertIn('error', data)
-        self.assertEqual(data['error']['email'], 'O email não é válido')
+        self.assertEqual(data['email'], ['O email não é válido'])
 
     def test_required_password(self):
         response = self.client.post(reverse('user-register'), {
@@ -100,8 +96,7 @@ class UserViewRegisterTestCase(TestCase):
         # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de senha obrigatória
         self.assertEqual(response.status_code, 400)
         data = response.json()
-        self.assertIn('error', data)
-        self.assertEqual(data['error']['password'], 'O campo senha é obrigatório')
+        self.assertEqual(data['password'], ['O campo senha é obrigatório'])
 
     def test_invalid_password(self):
         response = self.client.post(reverse('user-register'), {
@@ -113,6 +108,5 @@ class UserViewRegisterTestCase(TestCase):
         # Verificar se o código de status é 400 (bad request) e se os dados contém a mensagem de senha inválida
         self.assertEqual(response.status_code, 400)
         data = response.json()
-        self.assertIn('error', data)
-        self.assertEqual(data['error']['password'], 'A senha deve conter pelo menos uma letra minúscula, uma letra maiúscula, um caractere especial e pelo menos 6 caracteres')
+        self.assertEqual(data['password'], ['A senha deve conter pelo menos uma letra minúscula, uma letra maiúscula, um caractere especial e pelo menos 6 caracteres'])
 
