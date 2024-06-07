@@ -30,7 +30,7 @@ class CreateTaskTest(TestCase):
     def test_create_task_success(self):
 
         # Fazer uma solicitação POST para a visualização protegida
-        response = self.client.post(reverse('task'), data=data_task)
+        response = self.client.post(reverse('create-task'), data=data_task)
 
         # Verificar se a solicitação foi bem-sucedida
         data = response.json()
@@ -45,7 +45,7 @@ class CreateTaskTest(TestCase):
         del new_data['description']
 
         # Fazer uma solicitação POST para a visualização protegida
-        response = self.client.post(reverse('task'), data=new_data)
+        response = self.client.post(reverse('create-task'), data=new_data)
 
         # Verificar se a solicitação foi bem-sucedida
         self.assertEqual(response.status_code, 400)
@@ -56,7 +56,7 @@ class CreateTaskTest(TestCase):
         new_data['description'] = 'a' * 256
 
         # Fazer uma solicitação POST para a visualização protegida
-        response = self.client.post(reverse('task'), data=new_data)
+        response = self.client.post(reverse('create-task'), data=new_data)
 
         # Verificar se a solicitação foi bem-sucedida
         self.assertEqual(response.status_code, 400)
@@ -67,7 +67,7 @@ class CreateTaskTest(TestCase):
         del new_data['title']
 
         # Fazer uma solicitação POST para a visualização protegida
-        response = self.client.post(reverse('task'), data=new_data)
+        response = self.client.post(reverse('create-task'), data=new_data)
 
         # Verificar se a solicitação foi bem-sucedida
         self.assertEqual(response.status_code, 400)
@@ -78,7 +78,7 @@ class CreateTaskTest(TestCase):
         new_data['title'] = 'a' * 256
 
         # Fazer uma solicitação POST para a visualização protegida
-        response = self.client.post(reverse('task'), data=new_data)
+        response = self.client.post(reverse('create-task'), data=new_data)
 
         # Verificar se a solicitação foi bem-sucedida
         self.assertEqual(response.status_code, 400)
@@ -89,7 +89,7 @@ class CreateTaskTest(TestCase):
         del new_data['category']
 
         # Fazer uma solicitação POST para a visualização protegida
-        response = self.client.post(reverse('task'), data=new_data)
+        response = self.client.post(reverse('create-task'), data=new_data)
 
         # Verificar se a solicitação foi bem-sucedida
         self.assertEqual(response.status_code, 400)
@@ -100,7 +100,7 @@ class CreateTaskTest(TestCase):
         new_data['category'] = 'invalid'
 
         # Fazer uma solicitação POST para a visualização protegida
-        response = self.client.post(reverse('task'), data=new_data)
+        response = self.client.post(reverse('create-task'), data=new_data)
 
         # Verificar se a solicitação foi bem-sucedida
         self.assertEqual(response.status_code, 400)
@@ -108,11 +108,47 @@ class CreateTaskTest(TestCase):
         actual_error = response.json()['errors']['category']
         self.assertEqual(expected_error.replace(" ", ""), actual_error.replace(" ", ""))
 
+
+    def test_create_task_required_date(self):
+        new_data = {**data_task}
+        del new_data['execute_date']
+
+        # Fazer uma solicitação POST para a visualização protegida
+        response = self.client.post(reverse('create-task'), data=new_data)
+
+        # Verificar se a solicitação foi bem-sucedida
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json(), {'errors': {'execute_date': "O campo 'execute_date' é obrigatório"}})
+
+    def test_create_task_past_date(self):
+        new_data = {**data_task}
+        new_data['execute_date'] = '2020-01-01'
+
+        # Fazer uma solicitação POST para a visualização protegida
+        response = self.client.post(reverse('create-task'), data=new_data)
+
+        # Verificar se a solicitação foi bem-sucedida
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json(), {'errors': {'execute_date': "O campo 'execute_date' deve ser uma data futura"}})
+
+    def test_create_task_invalid_format_date(self):
+        new_data = {**data_task}
+        new_data['execute_date'] = '01-01-2020'
+
+        # Fazer uma solicitação POST para a visualização protegida
+        response = self.client.post(reverse('create-task'), data=new_data)
+
+        # Verificar se a solicitação foi bem-sucedida
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json(), {'errors': {'execute_date': "O formato da data deve ser 'YYYY-MM-DD'"}})
+
     def test_create_task_unauthorized(self): 
         self.client.logout()
         # Criar a solicitação POST sem autenticação
-        response = self.client.post(reverse('task'), data=data_task)
+        response = self.client.post(reverse('create-task'), data=data_task)
         
         # Verificar se o código de status é 401 (não autorizado) messagem de erro
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.json(), {'message': 'Autenticação necessária'})
+
+    

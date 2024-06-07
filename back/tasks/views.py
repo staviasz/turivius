@@ -1,9 +1,9 @@
-from datetime import datetime 
+from datetime import datetime
+import json 
 from django.views import View
 from django.http import JsonResponse
 
 from .models import Category, Task
-from django.utils.timezone import make_aware
 
 
 # Create your views here.
@@ -15,7 +15,9 @@ class TaskView(View):
         execute_date = request.POST.get("execute_date")
         category = request.POST.get("category")
 
-        errors = self._clean_data(title, description, execute_date, category)
+        user = request.user
+
+        errors = self._clean_data(action="create", title=title, description=description, execute_date=execute_date, category=category)
         if errors:
             return JsonResponse({"errors": errors}, status=400)
         
@@ -23,7 +25,8 @@ class TaskView(View):
             title=title,
             description=description,
             execute_date=execute_date,
-            category=category
+            category=category,
+            user=user
         )
 
         task_data = {
@@ -36,16 +39,63 @@ class TaskView(View):
 
         return JsonResponse(task_data, status=201)
     
-    def _clean_data(self, title, description, execute_date, category):
-        errors = [
-            ("title", self._clean_title(title)),
-            ("description", self._clean_description(description)),
-            ("execute_date", self._clean_execute_date(execute_date)),
-            ("category", self._clean_category(category)),
-        ]
+    def put(self, request, task_id):
 
-        return {field: error for field, error in errors if error}
+        body_str = request.body.decode('utf-8')
+        data = json.loads(body_str)
+        title = data.get("title")
+        description = data.get("description")
+        execute_date = data.get("execute_date")
+        category = data.get("category")
 
+
+        errors = self._clean_data(action="update", title=title, description=description, execute_date=execute_date, category=category)
+        if errors:
+            return JsonResponse({"errors": errors}, status=400)
+
+        try:
+            task = Task.objects.get(id=task_id)
+        except Task.DoesNotExist:
+            return JsonResponse({"message": "Tarefa não encontrada"}, status=404)
+
+        user = request.user
+        if task.user != user:
+            return JsonResponse({"message": "Tarefa pertencendo a outro usuário"}, status=401)
+
+        task.title = title or task.title
+        task.description = description or task.description
+        task.execute_date = execute_date or task.execute_date
+        task.category = category or task.category
+        task.save()
+
+        task_data = {
+            "id": task.id,
+            "title": task.title,
+            "description": task.description,
+            "execute_date": task.execute_date,
+            "category": task.category
+        }
+
+        return JsonResponse(task_data, status=200)
+
+    def _clean_data(self, action, **kwargs):
+        validators = {
+        'title': self._clean_title,
+        'description': self._clean_description,
+        'execute_date': self._clean_execute_date,
+        'category': self._clean_category,
+        }
+
+        errors = {}
+
+        for field, value in kwargs.items():
+            if field in validators and action == "create":
+                errors[field] = validators[field](value)
+
+            if field in validators and action == "update" and value:
+                errors[field] = validators[field](value)
+
+        return {field: error for field, error in errors.items() if error}
 
     def _clean_title(self, title):
         if not title:
@@ -74,7 +124,7 @@ class TaskView(View):
             return "O formato da data deve ser 'YYYY-MM-DD'"
         
         if date_obj < datetime.now():
-            return "A data não pode ser no passado"
+            return "O campo 'execute_date' deve ser uma data futura"
         
         return None
     
