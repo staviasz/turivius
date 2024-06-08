@@ -1,6 +1,5 @@
-export interface SignUp {
-  name: string;
+export interface ISignUp {
+  first_name: string;
   email: string;
   password: string;
-  acceptedTerms: boolean;
 }

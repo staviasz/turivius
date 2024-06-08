@@ -28,7 +28,7 @@ describe('<AppPage/>', () => {
     render(<AppPage />);
     const links = screen.getAllByRole('link');
     expect(links).toHaveLength(2);
-    expect(links[0]).toHaveAttribute('href', '/');
-    expect(links[1]).toHaveAttribute('href', '/');
+    expect(links[0]).toHaveAttribute('href', '/login');
+    expect(links[1]).toHaveAttribute('href', '/register');
   });
 });

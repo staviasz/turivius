@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
-import Logo from '.';
+import Title from '.';
 
-describe('<Logo/>', () => {
+describe('<Title/>', () => {
   it('should render', () => {
-    render(<Logo />);
+    render(<Title>Turivius</Title>);
     const logo = screen.getByRole('heading');
     expect(logo).toBeInTheDocument();
     expect(logo).toHaveTextContent('Turivius');

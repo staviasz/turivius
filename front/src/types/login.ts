@@ -1,5 +1,4 @@
-export interface Login {
+export interface ILogin {
   email: string;
   password: string;
-  remember: boolean;
 }
