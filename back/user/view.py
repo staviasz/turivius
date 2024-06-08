@@ -3,14 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import login as django_login, authenticate
 from django.contrib.auth.models import User
-
+from django.middleware.csrf import get_token
 from .serializers import UserRegisterSerializer, UserLoginSerializer
 
 class UserRegisterView(APIView):
     def post(self, request):
+        print(request)
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid():
-
             email = serializer.validated_data['email']
             if User.objects.filter(email=email).exists():
                 return Response({"message": "Este e-mail já está em uso."}, status=status.HTTP_400_BAD_REQUEST)
@@ -31,6 +31,7 @@ class UserLoginView(APIView):
             email = serializer.validated_data['email']
             password = serializer.validated_data['password']
             user = authenticate(username=email, password=password)
+            
             if user:
                 django_login(request, user)
                 user_data = {
@@ -38,6 +39,11 @@ class UserLoginView(APIView):
                     "first_name": user.first_name,
                     "email": user.email,
                 }
-                return Response(user_data, status=status.HTTP_200_OK)
+                csrf_token = get_token(request)  # Gera o token CSRF
+                
+                return Response({
+                    'user': user_data,
+                    'csrftoken': csrf_token
+                }, status=status.HTTP_200_OK)
             return Response({"message": "Credenciais inválidas"}, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

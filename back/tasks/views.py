@@ -7,10 +7,11 @@ from .models import Task  # Se você tiver um modelo Task
 class TaskView(APIView):
     def post(self, request):
         serializer = TaskSerializer(data=request.data)
+
+        # Crie a tarefa usando os dados validados
         if serializer.is_valid():
             validated_data = serializer.validated_data
-            # Crie a tarefa usando os dados validados
-            task = Task.objects.create(
+            Task.objects.create(
                 title=validated_data['title'],
                 description=validated_data['description'],
                 execute_date=validated_data['execute_date'],
@@ -23,9 +24,12 @@ class TaskView(APIView):
 
     def put(self, request, task_id):
         try:
+            # Busca a tarefa pelo id e pelo usuário para que o usuario so possa alterar as tarefas dele
             user = request.user
             task = Task.objects.get(id=task_id, user=user)
             serializer = TaskSerializer(task, data=request.data, partial=True)
+
+            # Valida e salva a tarefa
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -52,10 +56,8 @@ class TaskView(APIView):
     def get(self, request):
         """Retorna todas as tarefas do usuário"""
 
-        # Por ser uma rota protegida, os dados do usuário estão no request.user
         user = request.user
 
-        # Retorna todas as tarefas do usuário
         tasks = Task.objects.filter(user=user)
         tasks_data = [{
             "id": task.id,
