@@ -6,18 +6,18 @@ from django.contrib.auth.models import User
 # Create your models here.
 
 class Category(Enum):
-    STUDY = 'study'
-    WORK = 'work'
     HOME = 'home'
     LEISURE = 'leisure'
     FOOD = 'food'
-
+    PERSONAL = 'personal'
+    WORK = 'work'
+    STUDY = 'study'
 
 class Task(models.Model):
     title = models.CharField(max_length=30)
     description = models.TextField()
     execute_date = models.DateField()
-    category = models.CharField(max_length=30, choices=[(tag, tag.value) for tag in Category])
+    category = models.CharField(max_length=30 , choices=[(c.value, c.value) for c in Category])
     completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

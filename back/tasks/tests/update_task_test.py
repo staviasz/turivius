@@ -64,7 +64,7 @@ class UpdateTaskTest(TestCase):
 
         # Verificar se a solicitação foi mal-sucedida e retornou um erro 
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {'errors': {'description': "O campo 'description' pode conter no maximo 255 caracteres"}})
+        self.assertEqual(response.json(), {'description': ["O campo 'description' pode conter no maximo 255 caracteres"]})
     
     def test_update_task_max_length_title(self):
         # Alterando o valor do campo 'title' para um valor muito grande
@@ -75,7 +75,7 @@ class UpdateTaskTest(TestCase):
 
         # Verificar se a solicitação foi mal-sucedida e retornou um erro
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {'errors': {'title': "O campo 'title' pode conter no maximo 30 caracteres"}})
+        self.assertEqual(response.json(),  {'title': ["O campo 'title' pode conter no máximo 30 caracteres"]})
 
     def test_update_task_invalid_category(self):
         new_data = {**data_task}
@@ -85,9 +85,7 @@ class UpdateTaskTest(TestCase):
 
         # Verificar se a solicitação foi mal-sucedida e retornou um erro
         self.assertEqual(response.status_code, 400)
-        expected_error = "O campo 'category' deve ter um dos valores ['study','work', 'home', 'leisure', 'food']"
-        actual_error = response.json()['errors']['category']
-        self.assertEqual(expected_error.replace(" ", ""), actual_error.replace(" ", ""))
+        self.assertEqual(response.json(),{"category": ["O campo 'category' deve ter um dos valores ['home', 'leisure', 'food', 'personal', 'work', 'study']"]})
 
     def test_update_task_unauthorized(self): 
         self.client.logout()
@@ -113,6 +111,6 @@ class UpdateTaskTest(TestCase):
 
         response = self.client.put(reverse('update-task',kwargs={'task_id': self.task.id}), data=data_task, content_type='application/json')
         
-        # Verificar se o código de status é 401 (não autorizado) messagem de erro
-        self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.json(), {'message': 'Tarefa pertencendo a outro usuário'})
+        # Verificar se o código de status é 404 (não encontrado) messagem de erro
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), {'message': 'Tarefa não encontrada'})

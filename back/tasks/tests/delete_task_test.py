@@ -39,8 +39,8 @@ class DeleteTaskTest(TestCase):
         response = self.client.delete(reverse('delete-task', kwargs={'task_id': self.task.id}))
         
         # Verificar se o código de status é 401 (não autorizado) messagem de erro
-        self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.json(), {"message": "Tarefa pertencendo a outro usuário"})
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.json(), {'message': 'Tarefa não encontrada'})
 
     def test_delete_task_not_found(self):
         """Tenta deletar uma tarefa que não existe"""

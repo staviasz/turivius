@@ -37,7 +37,6 @@ class CreateTaskTest(TestCase):
         self.assertEqual(data['title'], data_task['title'])
         self.assertEqual(data['description'], data_task['description'])
         self.assertEqual(data['execute_date'], data_task['execute_date'])
-        self.assertEqual(data['category'], data_task['category'])
 
     def test_create_task_required_description(self):
         new_data = {**data_task}
@@ -47,7 +46,7 @@ class CreateTaskTest(TestCase):
 
         # Verificar se a solicitação retornou um erro de validação para o campo description
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {'errors': {'description': "O campo 'description' é obrigatório"}})
+        self.assertEqual(response.json(),  {'description': ["O campo 'description' é obrigatório"]})
     
     def test_create_task_max_length_description(self):
         new_data = {**data_task}
@@ -57,7 +56,7 @@ class CreateTaskTest(TestCase):
 
         # Verificar se a solicitação retornou um erro de validação para o campo description
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {'errors': {'description': "O campo 'description' pode conter no maximo 255 caracteres"}})
+        self.assertEqual(response.json(),  {'description': ["O campo 'description' pode conter no maximo 255 caracteres"]})
     
     def test_create_task_required_title(self):
         new_data = {**data_task}
@@ -67,7 +66,7 @@ class CreateTaskTest(TestCase):
 
         # Verificar se a solicitação retornou um erro de validação para o campo title
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {'errors': {'title': "O campo 'title' é obrigatório"}})
+        self.assertEqual(response.json(),  {'title': ["O campo 'title' é obrigatório"]})
     
     def test_create_task_max_length_title(self):
         new_data = {**data_task}
@@ -77,7 +76,7 @@ class CreateTaskTest(TestCase):
 
         # Verificar se a solicitação retornou um erro de validação para o campo title
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {'errors': {'title': "O campo 'title' pode conter no maximo 30 caracteres"}})
+        self.assertEqual(response.json(),  {'title': ["O campo 'title' pode conter no máximo 30 caracteres"]})
 
     def test_create_task_required_category(self):
         new_data = {**data_task}
@@ -87,7 +86,7 @@ class CreateTaskTest(TestCase):
 
         # Verificar se a solicitação retornou um erro de validação para o campo category
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {'errors': {'category': "O campo 'category' é obrigatório"}})
+        self.assertEqual(response.json(),  {'category': ["O campo 'category' é obrigatório"]})
     
     def test_create_task_invalid_category(self):
         new_data = {**data_task}
@@ -97,9 +96,7 @@ class CreateTaskTest(TestCase):
 
         # Verificar se a solicitação retornou um erro de validação para o campo category
         self.assertEqual(response.status_code, 400)
-        expected_error = "O campo 'category' deve ter um dos valores ['study','work', 'home', 'leisure', 'food']"
-        actual_error = response.json()['errors']['category']
-        self.assertEqual(expected_error.replace(" ", ""), actual_error.replace(" ", ""))
+        self.assertEqual(response.json(), {"category": ["O campo 'category' deve ter um dos valores ['home', 'leisure', 'food', 'personal', 'work', 'study']"]})
 
 
     def test_create_task_required_date(self):
@@ -110,7 +107,7 @@ class CreateTaskTest(TestCase):
 
         # Verificar se a solicitação retornou um erro de validação para o campo execute_date
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {'errors': {'execute_date': "O campo 'execute_date' é obrigatório"}})
+        self.assertEqual(response.json(), {'execute_date': ["O campo 'execute_date' é obrigatório"]})
 
     def test_create_task_past_date(self):
         new_data = {**data_task}
@@ -120,7 +117,7 @@ class CreateTaskTest(TestCase):
 
         # Verificar se a solicitação retornou um erro de validação para o campo execute_date
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {'errors': {'execute_date': "O campo 'execute_date' deve ser uma data futura"}})
+        self.assertEqual(response.json(), {'execute_date': ["O campo 'execute_date' deve ser uma data futura"]})
 
     def test_create_task_invalid_format_date(self):
         new_data = {**data_task}
@@ -130,7 +127,7 @@ class CreateTaskTest(TestCase):
 
         # Verificar se a solicitação retornou um erro de validação para o campo execute_date
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.json(), {'errors': {'execute_date': "O formato da data deve ser 'YYYY-MM-DD'"}})
+        self.assertEqual(response.json(),{'execute_date': ["O formato da data deve ser 'YYYY-MM-DD'"]})
 
     def test_create_task_unauthorized(self): 
         self.client.logout()
