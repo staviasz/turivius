@@ -1,14 +1,10 @@
-import type { TypeTask } from './typeTasks';
-import type { WeekDays } from './weekDays';
+import type { Category } from './category';
 
-export interface Task extends TypeTask, WeekDays {
+export interface Task {
   id: number;
-  name: string;
-  date: Date;
-  hour: string;
-  category: string;
+  title: string;
+  executeDate: Date;
+  category: Category;
+  completed: boolean;
   description: string;
-  quantityPerWeek: number;
-  finallyDate: Date;
-  checked: boolean;
 }

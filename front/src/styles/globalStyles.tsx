@@ -10,6 +10,7 @@ export const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
     font-family: 'Roboto', sans-serif;
     scrollbar-color: ${colors.primary} ${colors.white} ;
+    
 
     &::-webkit-scrollbar {
         width: 10px;
@@ -22,6 +23,9 @@ export const GlobalStyles = createGlobalStyle`
   	&::-webkit-scrollbar-track {
   		background-color: ${colors.white};
   	}
+  }
+  li {
+    list-style: none;
   }
   body {
     color: ${colors.tertiary};
