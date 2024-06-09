@@ -19,6 +19,13 @@ const config = {
     '!src/**/stories.tsx',
     '!src/**/styles.tsx',
     '!src/app/layout.tsx',
+    '!src/app/api/**/*',
+    '!src/factories/**/*',
+    '!src/providers/**/*',
+    '!src/contexts/**/*',
+    '!src/styles/**/*',
+    '!src/types/**/*',
+    '!src/services/errors/errorApi.ts',
   ],
   // Add more setup options before each test is run
   setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],

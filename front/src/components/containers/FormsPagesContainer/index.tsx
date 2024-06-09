@@ -9,7 +9,7 @@ export default function FormsPagesContainer({ children }: IFormsPagesContainer) 
   return (
     <>
       <Header />
-      <S.Main>{children}</S.Main>
+      <S.Main className="container-main">{children}</S.Main>
     </>
   );
 }
