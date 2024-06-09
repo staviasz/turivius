@@ -49,7 +49,7 @@ export const ContainerDescription = styled.div`
 
 export const Container = styled.div<ICardTaskStyles>`
   max-width: 400px;
-  background-color: ${colors.tertiary};
+  background-color: ${({ checked }) => (checked ? colors.secondary : colors.tertiary)};
   border-radius: 8px;
   padding: 8px;
   position: relative;

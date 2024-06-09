@@ -1,14 +1,23 @@
+'use client';
+
 import TaskForm from '@/components/forms/TaskForm';
 import Header from '@/components/headers';
 import PopUp from '@/components/popUp';
 import Task from '@/components/tasks';
-import { tasks } from '@/mocks/task';
+import { useTask } from '@/hooks/useTask';
+import type { Task as ITask } from '@/types/task';
 import * as S from './styles';
-export default function DashboardContainer() {
-  const teste = false;
+
+export interface IDashboardContainer {
+  tasks: ITask[];
+}
+
+export default function DashboardContainer({ tasks }: IDashboardContainer) {
+  const { formIsOpen } = useTask();
+
   return (
     <>
-      {teste && (
+      {formIsOpen && (
         <PopUp>
           <TaskForm />
         </PopUp>

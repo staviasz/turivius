@@ -1,8 +1,11 @@
 'use client';
 
 import ContainerTask from '@/components/containers/ContainerTask';
+import { useTask } from '@/hooks/useTask';
 import { categories } from '@/mocks/categories';
 import { type Task } from '@/types/task';
+import addIcon from '@public/icons/addIcon.svg';
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import * as S from './styles';
 
@@ -11,6 +14,7 @@ export interface ITask {
 }
 
 export default function Task({ tasks }: ITask) {
+  const { setFormIsOpen } = useTask();
   const [isTask, setIsTask] = useState<Task[]>([]);
   const [selected, setSelected] = useState('all tasks');
 
@@ -35,15 +39,20 @@ export default function Task({ tasks }: ITask) {
 
   return (
     <S.Container>
-      <S.Select onChange={e => setSelected(e.target.value)} value={selected}>
-        <option value="all tasks">Todas as atividades</option>
-        {Object.values(categories).map(category => (
-          <option key={category} value={category}>
-            {category}
-          </option>
-        ))}
-        <option value="completed">Concluidas</option>
-      </S.Select>
+      <S.ContainerSelectAndButton>
+        <S.Select onChange={e => setSelected(e.target.value)} value={selected}>
+          <option value="all tasks">Todas as atividades</option>
+          {Object.values(categories).map(category => (
+            <option key={category} value={category}>
+              {category}
+            </option>
+          ))}
+          <option value="completed">Concluidas</option>
+        </S.Select>
+        <S.ButtonAddTask onClick={() => setFormIsOpen(true)}>
+          <Image src={addIcon} alt="Adicionar atividade" />
+        </S.ButtonAddTask>
+      </S.ContainerSelectAndButton>
       {tasks.length ? (
         <ContainerTask tasks={isTask} />
       ) : (

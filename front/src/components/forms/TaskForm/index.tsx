@@ -2,16 +2,19 @@
 
 import ButtonSecondary from '@/components/buttons/ButtonSecondary';
 import Title from '@/components/Title';
+import { useTask } from '@/hooks/useTask';
 import { categories } from '@/mocks/categories';
 import type { Task } from '@/types/task';
 import { pastDate } from '@/utils/validators/pastDate';
+import iconClose from '@public/icons/closeIcon.svg';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import Input from '../fields/Input';
 import * as S from './styles';
 
 export default function TaskForm() {
-  const [selected, setSelected] = useState('all tasks');
+  const { setFormIsOpen, setSelectedTask, selectedTask } = useTask();
+  const [selected, setSelected] = useState(categories[selectedTask?.category!] || '');
 
   const {
     register,
@@ -19,7 +22,18 @@ export default function TaskForm() {
     formState: { errors },
   } = useForm<Task>({
     mode: 'onChange',
+    defaultValues: {
+      ...selectedTask,
+      executeDate: selectedTask?.executeDate
+        ? (new Date(selectedTask?.executeDate).toISOString().split('T')[0] as unknown as Date)
+        : undefined,
+    },
   });
+
+  const closeForm = () => {
+    setFormIsOpen(false);
+    setSelectedTask(null);
+  };
 
   const submitHandler = (data: Task) => {
     // eslint-disable-next-line no-console
@@ -28,6 +42,7 @@ export default function TaskForm() {
 
   return (
     <S.RegisterForm onSubmit={handleSubmit(submitHandler)}>
+      <S.ImageNext src={iconClose} alt="Fechar formulario" onClick={closeForm} />
       <Title>Adicionar atividade</Title>
       <Input
         id="title"
@@ -60,7 +75,7 @@ export default function TaskForm() {
             validate: value => pastDate(value!) || 'Coloque uma data futura',
           })}
         />
-        <S.Select onChange={e => setSelected(e.target.value)} value={selected}>
+        <S.Select onChange={e => setSelected(e.target.value)} defaultValue={selected}>
           <option defaultValue="" disabled>
             Selecione uma opção
           </option>
