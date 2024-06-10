@@ -8,8 +8,8 @@ import * as S from './styles';
 export interface ICheckBox extends React.InputHTMLAttributes<HTMLInputElement> {
   id: string;
 }
-export default function CustonCheckedBox({ id, defaultChecked = false, ...props }: ICheckBox) {
-  const [isChecked, setChecked] = useState(defaultChecked);
+export default function CustonCheckedBox({ id, checked = false, ...props }: ICheckBox) {
+  const [isChecked, setChecked] = useState(checked);
 
   return (
     <S.CustonCheckedBox htmlFor={`checkbox-${id}`}>
@@ -17,7 +17,7 @@ export default function CustonCheckedBox({ id, defaultChecked = false, ...props 
         aria-label="input-checkbox"
         id={`checkbox-${id}`}
         type="checkbox"
-        defaultChecked={isChecked}
+        checked={isChecked}
         {...props}
       />
       <span aria-label="checkbox" onClick={() => setChecked(!isChecked)}>

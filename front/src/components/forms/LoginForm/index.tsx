@@ -56,6 +56,7 @@ export default function LoginForm() {
       <Input
         id="password"
         label="Senha"
+        type="password"
         placeholder="Senha"
         hasError={!!errors.password}
         errorMessage={errors.password?.message}

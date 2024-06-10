@@ -144,7 +144,11 @@ export default function TaskForm() {
         })}
       />
       <S.ContainerButtons>
-        {selectedTask && <ButtonDanger name="deleteTask">Deletar</ButtonDanger>}
+        {selectedTask && (
+          <ButtonDanger type="submit" name="deleteTask">
+            Deletar
+          </ButtonDanger>
+        )}
         <ButtonSecondary type="submit" name="saveTask">
           {!selectedTask ? 'Cadastrar' : 'Editar'}
         </ButtonSecondary>

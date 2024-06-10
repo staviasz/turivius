@@ -14,6 +14,7 @@ export class FetchAdapter implements HttpClient {
         },
         body: JSON.stringify(options.body),
       });
+      const body = await response.json();
 
       if (!response.ok) {
         const body = await response.json();
@@ -21,13 +22,13 @@ export class FetchAdapter implements HttpClient {
       }
       return {
         status: response.status,
-        body: await response.json(),
+        body: body,
       };
     } catch (error) {
       if (error instanceof ErrorApi) {
         throw error;
       }
-      throw new ErrorApi(error, 500);
+      return {} as HttpResponse;
     }
   }
 }

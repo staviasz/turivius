@@ -16,5 +16,9 @@ RUN pip install -r requirements.txt
 # Copiar o código do projeto
 COPY . .
 
-# Comando para rodar o servidor de desenvolvimento
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Executar migrações do banco de dados
+RUN python manage.py makemigrations
+RUN python manage.py migrate
+
+# Comando para rodar o servidor Gunicorn em produção
+CMD ["gunicorn", "turivius_api.wsgi:application", "--bind", "0.0.0.0:8000"]

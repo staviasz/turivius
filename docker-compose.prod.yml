@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./back
+      dockerfile: Dockerfile.prod
+    container_name: django_container
+    volumes:
+      - ./back:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG="False"
+
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile.prod
+    container_name: nextjs_container
+    volumes:
+      - ./front:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:8000
+
+
