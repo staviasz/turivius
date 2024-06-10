@@ -2,16 +2,19 @@ import type { HttpClient } from '@/types/contracts/services/httpClient';
 import type { HttpResponse } from '@/types/contracts/services/httpResponse';
 import type { Task } from '@/types/task';
 
-export const createTask = async (
+export default async function createTasks(
   httpClient: HttpClient,
+  jwtToken: string,
   body: Task,
-  token: string,
-): Promise<HttpResponse> => {
+): Promise<HttpResponse> {
   try {
-    const response = await httpClient.request('/tasks', {
+    console.log(jwtToken);
+
+    const response = await httpClient.request('/task', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${token}`,
+        // 'X-CSRF-Token': csrfToken,
+        Authorization: `Bearer ${jwtToken}`,
       },
       body,
     });
@@ -20,4 +23,4 @@ export const createTask = async (
   } catch (error) {
     throw error;
   }
-};
+}

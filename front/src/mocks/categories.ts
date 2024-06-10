@@ -1,6 +1,6 @@
 import { Category } from '@/types/category';
 
-export const categories = {
+export const categories: { [key in Category]: string } = {
   [Category.home]: 'Casa',
   [Category.leisure]: 'Lazer',
   [Category.food]: 'Alimentação',

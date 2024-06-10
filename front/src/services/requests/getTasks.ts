@@ -1,21 +1,22 @@
 import type { HttpClient } from '@/types/contracts/services/httpClient';
 import type { HttpResponse } from '@/types/contracts/services/httpResponse';
 
-export const getTasks = async (
+export default async function getTasks(
   httpClient: HttpClient,
-  month: string,
-  year: string,
-  token: string,
-): Promise<HttpResponse> => {
+  jwtToken: string,
+): Promise<HttpResponse> {
   try {
-    const response = await httpClient.request(`/tasks/?month=${month}&year=${year}`, {
+    const response = await httpClient.request('/task', {
       method: 'GET',
+
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
       },
     });
+    console.log(response);
+
     return response;
   } catch (error) {
     throw error;
   }
-};
+}

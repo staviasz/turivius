@@ -3,11 +3,18 @@
 import ButtonSecondary from '@/components/buttons/ButtonSecondary';
 import Title from '@/components/Title';
 import type { ILogin } from '@/types/login';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
+import ErrorMessage from '../fields/ErrorMessage';
 import Input from '../fields/Input';
 import * as S from './styles';
 
 export default function LoginForm() {
+  const router = useRouter();
+  const [errorsApi, setErrosApi] = useState<string>();
   const {
     register,
     handleSubmit,
@@ -16,9 +23,19 @@ export default function LoginForm() {
     mode: 'onChange',
   });
 
-  const submitHandler = (data: ILogin) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
+  const submitHandler: SubmitHandler<ILogin> = async (data: ILogin) => {
+    const response = await signIn('credentials', {
+      ...data,
+      redirect: false,
+    });
+
+    console.log(response);
+
+    if (!response?.ok) {
+      setErrosApi('credenciais inválidas');
+      return;
+    }
+    router.replace('/dashboard');
   };
 
   return (
@@ -53,7 +70,8 @@ export default function LoginForm() {
           },
         })}
       />
-      <ButtonSecondary type="submit">Entrar</ButtonSecondary>
+      {errorsApi && <ErrorMessage>{errorsApi}</ErrorMessage>}
+      <ButtonSecondary>Entrar</ButtonSecondary>
     </S.LoginsForm>
   );
 }

@@ -13,10 +13,14 @@ export interface ITask {
   tasks: Task[];
 }
 
-export default function Task({ tasks }: ITask) {
-  const { setFormIsOpen } = useTask();
-  const [isTask, setIsTask] = useState<Task[]>([]);
+export default function Task() {
+  const { setFormIsOpen, tasks } = useTask();
+  const [isTask, setIsTask] = useState<Task[]>(tasks);
   const [selected, setSelected] = useState('all tasks');
+
+  console.log(tasks);
+
+  console.log(isTask);
 
   useEffect(() => {
     if (selected === 'all tasks') {
@@ -35,7 +39,7 @@ export default function Task({ tasks }: ITask) {
       task => categories[task.category] === selected && task.completed === false,
     );
     setIsTask(tasksForCategory);
-  }, [selected, tasks]);
+  }, [tasks, selected]);
 
   return (
     <S.Container>
@@ -53,10 +57,10 @@ export default function Task({ tasks }: ITask) {
           <Image src={addIcon} alt="Adicionar atividade" />
         </S.ButtonAddTask>
       </S.ContainerSelectAndButton>
-      {tasks.length ? (
+      {isTask && isTask.length ? (
         <ContainerTask tasks={isTask} />
       ) : (
-        <S.NoTask>Você ainda não tem atividades para hoje.</S.NoTask>
+        <S.NoTask>Você ainda não tem atividades cadastradas ou já as concluiu.</S.NoTask>
       )}
     </S.Container>
   );

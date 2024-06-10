@@ -2,12 +2,20 @@
 
 import ButtonSecondary from '@/components/buttons/ButtonSecondary';
 import Title from '@/components/Title';
+import makeRegister from '@/factories/services/makeRegister';
+import type { ErrorApi } from '@/services/errors/errorApi';
 import type { ISignUp } from '@/types/signUp';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import type { SubmitHandler } from 'react-hook-form';
 import { useForm } from 'react-hook-form';
+import ErrorMessage from '../fields/ErrorMessage';
 import Input from '../fields/Input';
 import * as S from './styles';
 
 export default function RegisterForm() {
+  const router = useRouter();
+  const [errorApi, setErrorApi] = useState<string>();
   const {
     register,
     handleSubmit,
@@ -16,9 +24,16 @@ export default function RegisterForm() {
     mode: 'onChange',
   });
 
-  const submitHandler = (data: ISignUp) => {
+  const submitHandler: SubmitHandler<ISignUp> = async (data: ISignUp) => {
     // eslint-disable-next-line no-console
     console.log(data);
+    try {
+      await makeRegister(data);
+      router.push('/login');
+    } catch (error) {
+      const _error = error as ErrorApi;
+      setErrorApi(_error.body?.message);
+    }
   };
 
   return (
@@ -67,6 +82,7 @@ export default function RegisterForm() {
           },
         })}
       />
+      {errorApi && <ErrorMessage>{errorApi}</ErrorMessage>}
       <ButtonSecondary type="submit">Cadastrar</ButtonSecondary>
     </S.RegisterForm>
   );

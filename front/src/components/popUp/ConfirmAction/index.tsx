@@ -11,28 +11,36 @@ export interface IConfirmAction {
 }
 
 export default function ConfirmAction({ children }: IConfirmAction) {
-  const { executeServiceTask, setActionForm, setFormIsOpen } = useTask();
+  const { setExecuteServiceTask, setActionForm, setFormIsOpen } = useTask();
   const handleClick = async (operation: 'yes' | 'not') => {
-    switch (operation) {
-      case 'yes':
-        await executeServiceTask();
-        setActionForm(null);
-        setFormIsOpen(false);
-        break;
-      case 'not':
-        setActionForm(null);
+    console.log(operation);
+    try {
+      switch (operation) {
+        case 'yes':
+          setExecuteServiceTask(true);
+          setFormIsOpen(false);
+          setActionForm(null);
+          // setExecuteServiceTask(false);
+          break;
+        case 'not':
+          setActionForm(null);
 
-        break;
+          break;
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
   return (
     <PopUp>
-      <p>{children}</p>
-      <S.ContainerButton>
-        <ButtonSecondary onClick={() => handleClick('yes')}>Sim</ButtonSecondary>
-        <ButtonDanger onClick={() => handleClick('not')}>Não</ButtonDanger>
-      </S.ContainerButton>
+      <S.Container>
+        <p>{children}</p>
+        <S.ContainerButton>
+          <ButtonSecondary onClick={() => handleClick('yes')}>Sim</ButtonSecondary>
+          <ButtonDanger onClick={() => handleClick('not')}>Não</ButtonDanger>
+        </S.ContainerButton>
+      </S.Container>
     </PopUp>
   );
 }

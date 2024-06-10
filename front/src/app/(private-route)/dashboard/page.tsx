@@ -1,11 +1,14 @@
 import DashboardContainer from '@/components/containers/DashboardContainer';
-import { tasks } from '@/mocks/task';
 import { TaskProvider } from '@/providers/taskProvider';
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  // const response = await makeGetTask();
+  // const { body } = response;
+  // console.log(body);
+
   return (
     <TaskProvider>
-      <DashboardContainer tasks={tasks} />
+      <DashboardContainer />
     </TaskProvider>
   );
 }

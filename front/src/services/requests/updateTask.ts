@@ -2,17 +2,17 @@ import type { HttpClient } from '@/types/contracts/services/httpClient';
 import type { HttpResponse } from '@/types/contracts/services/httpResponse';
 import type { Task } from '@/types/task';
 
-export const updateTask = async (
+export default async function updateTasks(
   httpClient: HttpClient,
+  jwtToken: string,
+  body: Task,
   id: number,
-  body: Partial<Task>,
-  token: string,
-): Promise<HttpResponse> => {
+): Promise<HttpResponse> {
   try {
-    const response = await httpClient.request(`/tasks/${id}`, {
+    const response = await httpClient.request(`/task/${id}`, {
       method: 'PUT',
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${jwtToken}`,
       },
       body,
     });
@@ -21,4 +21,4 @@ export const updateTask = async (
   } catch (error) {
     throw error;
   }
-};
+}

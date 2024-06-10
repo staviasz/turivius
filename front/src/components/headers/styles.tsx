@@ -8,6 +8,12 @@ export const Header = styled.header`
   background-color: ${colors.tertiary};
   padding: 16px;
 
+  > div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   ${media.mobile} {
     text-align: center;
   }

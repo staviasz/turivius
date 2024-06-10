@@ -1,18 +1,14 @@
-import type { HttpClient } from '@/types/contracts/services/httpClient';
-
-export const logout = async (httpClient: HttpClient, token: string): Promise<void> => {
+import type { HttpClient } from './../../types/contracts/services/httpClient';
+export default async function logout(HttpClient: HttpClient, token: string) {
   try {
-    await httpClient.request('/auth/disconnect', {
+    const response = await HttpClient.request('/user/logout', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      body: {
-        closeAllSessions: true,
-      },
     });
-    return;
+    return response;
   } catch (error) {
     throw error;
   }
-};
+}

@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 
 import { TaskContext } from '@/contexts/TaskContext';
 import type { Task } from '@/types/task';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 interface ITaskProvider {
   children: React.ReactNode;
@@ -13,35 +14,7 @@ export const TaskProvider: React.FC<ITaskProvider> = ({ children }) => {
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [formIsOpen, setFormIsOpen] = useState<boolean>(false);
   const [selectedActionForm, setActionForm] = useState<'create' | 'update' | 'delete' | null>(null);
-  const [executeServiceTask, setExecuteServiceTask] = useState<() => Promise<void>>(() =>
-    Promise.resolve(),
-  );
-
-  useEffect(() => {
-    switch (selectedActionForm) {
-      case 'create':
-        setExecuteServiceTask(() => {
-          return () => {
-            return Promise.resolve();
-          };
-        });
-        break;
-      case 'update':
-        setExecuteServiceTask(() => {
-          return () => {
-            return Promise.resolve();
-          };
-        });
-        break;
-      case 'delete':
-        setExecuteServiceTask(() => {
-          return () => {
-            return Promise.resolve();
-          };
-        });
-        break;
-    }
-  }, [selectedActionForm]);
+  const [confirmAction, setConfirmAction] = useState<boolean>(false);
 
   return (
     <TaskContext.Provider
@@ -53,7 +26,8 @@ export const TaskProvider: React.FC<ITaskProvider> = ({ children }) => {
         formIsOpen,
         setFormIsOpen,
         setActionForm,
-        executeServiceTask,
+        confirmAction,
+        setConfirmAction,
         selectedActionForm,
       }}
     >

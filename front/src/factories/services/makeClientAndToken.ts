@@ -5,22 +5,24 @@ import { getServerSession } from 'next-auth';
 
 interface makeClientAndTokenReturn {
   httpClient: HttpClient;
-  token: string;
-  refreshToken: string;
+  csrfToken: string;
+  jwtToken: string;
 }
 
-export const makeClientAndToken = async (): Promise<makeClientAndTokenReturn> => {
+export const makeClientAndToken = async (token?: string): Promise<makeClientAndTokenReturn> => {
   const httpClient: HttpClient = new FetchAdapter();
 
-  let token = '';
-  let refreshToken = '';
+  let csrfToken = '';
+  let jwtToken = token || '';
   try {
     const { user } = (await getServerSession(nextAuthOptions)) as any;
-    const { token: userToken, refreshToken: userRefreshToken } = user;
+    const { csrftoken: token, access_token } = user;
 
-    token = userToken;
-    refreshToken = userRefreshToken;
+    csrfToken = token;
+    jwtToken = access_token;
+    console.log(access_token);
   } catch (error) {}
+  console.log(jwtToken);
 
-  return { httpClient, token, refreshToken };
+  return { httpClient, csrfToken, jwtToken };
 };

@@ -5,15 +5,6 @@ export class ErrorApi extends Error {
     super();
     this.name = name || 'ErrorApi';
     this.status = status;
-    this.body = body ? this.cleanErrormessages(body) : undefined;
-  }
-
-  private cleanErrormessages(body: any) {
-    const { errors } = body;
-    const newErrors: string[] = errors.map((error: { message: string }) => {
-      const { message } = error;
-      return message;
-    });
-    return newErrors;
+    this.body = body;
   }
 }

@@ -57,3 +57,9 @@ export const ImageNext = styled(Image)`
   right: 0;
   cursor: pointer;
 `;
+
+export const ContainerButtons = styled.div`
+  display: flex;
+  gap: 8px;
+  width: 100%;
+`;

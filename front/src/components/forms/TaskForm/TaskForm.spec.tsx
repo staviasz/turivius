@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import TaskForm from '.';
 
+jest.mock('next/image');
+
 describe('<TaskForm/>', () => {
   it('should render heading with text Crie sua conta', () => {
     render(<TaskForm />);

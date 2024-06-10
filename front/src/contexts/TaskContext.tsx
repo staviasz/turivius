@@ -12,7 +12,8 @@ interface ITaskContext {
   setFormIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedActionForm: 'create' | 'update' | 'delete' | null;
   setActionForm: React.Dispatch<React.SetStateAction<'create' | 'update' | 'delete' | null>>;
-  executeServiceTask: () => Promise<void>;
+  confirmAction: boolean;
+  setConfirmAction: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const TaskContext = createContext<ITaskContext>({} as ITaskContext);

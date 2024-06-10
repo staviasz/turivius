@@ -1,9 +1,9 @@
-import { makeClientAndToken } from '@/factories/services/makeClientAndToken';
-import { login } from '@/services/requests/login';
+import loginUser from '@/services/requests/login';
 import type { HttpResponse } from '@/types/contracts/services/httpResponse';
-import type { Login } from '@/types/login';
+import type { ILogin } from '@/types/login';
+import { makeClientAndToken } from './makeClientAndToken';
 
-export const makeLogin = async (body: Login): Promise<HttpResponse> => {
+export default async function makeLogin(body: ILogin): Promise<HttpResponse> {
   const { httpClient } = await makeClientAndToken();
-  return login(httpClient, body);
-};
+  return loginUser(httpClient, body);
+}
