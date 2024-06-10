@@ -1,15 +1,21 @@
 from django.test import TestCase
 from django.urls import reverse
-from django.test import Client
 from django.contrib.auth.models import User
 from tasks.models import Task
+from rest_framework.test import APIClient
+from rest_framework_simplejwt.tokens import RefreshToken
 
-
+def login_user(user, client):
+    # Obtenha um token JWT para o usuário
+    refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
+    # Configurar o cabeçalho de autorização com o token JWT para todos os testes
+    client.credentials(HTTP_AUTHORIZATION='Bearer ' + access_token)
 
 class DeleteTaskTest(TestCase):
     def setUp(self) -> None:
         """Cria 2 usuários e faz login de um deles"""
-        self.client = Client()
+        self.client = APIClient()
         self.user_primary = User.objects.create_user(
             first_name='John Doe',
             username='test@example.com',
@@ -35,7 +41,8 @@ class DeleteTaskTest(TestCase):
     def test_delete_task_no_owner(self):
         """usuario tentando fazer delete de uma tarefa que não pertence"""
 
-        self.client.login(username='test2@example.com', password='password!123')
+        login_user(self.user_secondary, self.client)
+        
         response = self.client.delete(reverse('delete-task', kwargs={'task_id': self.task.id}))
         
         # Verificar se o código de status é 401 (não autorizado) messagem de erro
@@ -45,7 +52,8 @@ class DeleteTaskTest(TestCase):
     def test_delete_task_not_found(self):
         """Tenta deletar uma tarefa que não existe"""
 
-        self.client.login(username='test@example.com', password='password!123')
+        login_user(self.user_primary, self.client)
+
         response = self.client.delete(reverse('delete-task', kwargs={'task_id': 999}))
         
         # Verificar se o código de status é 404 (nao encontrado) messagem de erro
@@ -55,7 +63,7 @@ class DeleteTaskTest(TestCase):
     def test_delete_task_success(self):
         """Deleta uma tarefa existente"""
 
-        self.client.login(username='test@example.com', password='password!123')
+        login_user(self.user_primary, self.client)
         response = self.client.delete(reverse('delete-task', kwargs={'task_id': self.task.id}))
 
         # Verificar se o código de status é 204 (sem corpo de resposta)

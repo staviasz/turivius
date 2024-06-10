@@ -1,7 +1,8 @@
 from django.test import TestCase
 from django.urls import reverse
-from django.test import Client
 from django.contrib.auth.models import User
+from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.test import APIClient
 
 
 # Create your tests here.
@@ -16,14 +17,19 @@ data_task = {
 class CreateTaskTest(TestCase):
     def setUp(self):
         """Cria um usuário e faz login"""
-        self.client = Client()
+        self.client = APIClient()
         self.user = User.objects.create_user(
             first_name='John Doe',
             username='test@example.com',
             email='test@example.com',
             password='password!123',
         )
-        self.client.login(username='test@example.com', password='password!123')
+
+         # Obtenha um token JWT para o usuário
+        refresh = RefreshToken.for_user(self.user)
+        self.access_token = str(refresh.access_token)
+        # Configurar o cabeçalho de autorização com o token JWT para todos os testes
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.access_token)
         
 
     def test_create_task_success(self):
@@ -136,6 +142,6 @@ class CreateTaskTest(TestCase):
         
         # Verificar se o código de status é 401 (não autorizado) messagem de erro
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.json(), {'message': 'Autenticação necessária'})
+        self.assertEqual(response.json(), {'message': 'Token de autenticação não fornecido ou no formato inválido'})
 
  

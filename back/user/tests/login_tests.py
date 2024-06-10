@@ -27,9 +27,9 @@ class UserViewLoginTestCase(TestCase):
         # Verificar se o código de status é 200 (ok) e se os dados contém email e id do usuário
         data = response.json()
         self.assertEqual(response.status_code, 200)
-        self.assertIn('id', data)
-        self.assertEqual(data['email'], 'john.doe@example.com')
-        self.assertTrue(User.objects.filter(email='john.doe@example.com').exists())
+        self.assertEqual(data['user'],  {'id': 1, 'first_name': 'John Doe', 'email': 'john.doe@example.com'})
+        self.assertIn('csrftoken', data)
+        self.assertIn('access_token', data)
 
     def test_login_bad_request(self):
         response = self.client.post(reverse('user-login'), {

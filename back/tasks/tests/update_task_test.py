@@ -1,9 +1,9 @@
 from django.test import TestCase
 from django.urls import reverse
-from django.test import Client
 from django.contrib.auth.models import User
 from tasks.models import Task
-
+from rest_framework.test import APIClient
+from rest_framework_simplejwt.tokens import RefreshToken
 
 # Create your tests here.
 data_task = {
@@ -17,7 +17,7 @@ data_task = {
 class UpdateTaskTest(TestCase):
     def setUp(self):
         """Cria 2 usuários, faz login de um deles e cria uma tarefa"""
-        self.client = Client()
+        self.client = APIClient()
         self.user_primary = User.objects.create_user(
             first_name='John Doe',
             username='test@example.com',
@@ -39,12 +39,17 @@ class UpdateTaskTest(TestCase):
             category=data_task['category'],
             user=self.user_primary
         )
-        self.client.login(username='test@example.com', password='password!123')
+
+        # Obtenha um token JWT para o usuário
+        refresh = RefreshToken.for_user(self.user_primary)
+        self.access_token = str(refresh.access_token)
+        # Configurar o cabeçalho de autorização com o token JWT para todos os testes
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.access_token)
         
     def test_update_task_success(self):
 
         # Fazer uma solicitação PUT para a visualização protegida
-        response = self.client.put(reverse('update-task',kwargs={'task_id': self.task.id}), data={**data_task, 'completed': True}, content_type='application/json')
+        response = self.client.put(reverse("update-task",kwargs={"task_id": self.task.id}), data={**data_task, "completed": True})
 
         # Verificar se a solicitação foi bem-sucedida deve retornar a tarefa atualizada
         data = response.json()
@@ -60,7 +65,7 @@ class UpdateTaskTest(TestCase):
         new_data = {**data_task}
         new_data['description'] = 'a' * 256
 
-        response = self.client.put(reverse('update-task',kwargs={'task_id': self.task.id}), data=new_data, content_type='application/json')
+        response = self.client.put(reverse('update-task',kwargs={'task_id': self.task.id}), data=new_data)
 
         # Verificar se a solicitação foi mal-sucedida e retornou um erro 
         self.assertEqual(response.status_code, 400)
@@ -71,7 +76,7 @@ class UpdateTaskTest(TestCase):
         new_data = {**data_task}
         new_data['title'] = 'a' * 256
 
-        response = self.client.put(reverse('update-task',kwargs={'task_id': self.task.id}), data=new_data, content_type='application/json')
+        response = self.client.put(reverse('update-task',kwargs={'task_id': self.task.id}), data=new_data)
 
         # Verificar se a solicitação foi mal-sucedida e retornou um erro
         self.assertEqual(response.status_code, 400)
@@ -81,7 +86,7 @@ class UpdateTaskTest(TestCase):
         new_data = {**data_task}
         new_data['category'] = 'invalid'
 
-        response = self.client.put(reverse('update-task',kwargs={'task_id': self.task.id}), data=new_data, content_type='application/json')
+        response = self.client.put(reverse('update-task',kwargs={'task_id': self.task.id}), data=new_data)
 
         # Verificar se a solicitação foi mal-sucedida e retornou um erro
         self.assertEqual(response.status_code, 400)
@@ -91,14 +96,14 @@ class UpdateTaskTest(TestCase):
         self.client.logout()
 
         # Criar a solicitação POST sem autenticação
-        response = self.client.put(reverse('update-task',kwargs={'task_id': self.task.id}), data=data_task, content_type='application/json')
+        response = self.client.put(reverse('update-task',kwargs={'task_id': self.task.id}), data=data_task)
         
         # Verificar se o código de status é 401 (não autorizado) messagem de erro
         self.assertEqual(response.status_code, 401)
-        self.assertEqual(response.json(), {'message': 'Autenticação necessária'})
+        self.assertEqual(response.json(), {'message': 'Token de autenticação não fornecido ou no formato inválido'})
 
     def test_update_task_not_found(self):
-        response = self.client.put(reverse('update-task',kwargs={'task_id': 999}), data=data_task, content_type='application/json')
+        response = self.client.put(reverse('update-task',kwargs={'task_id': 999}), data=data_task)
         
         # Verificar se o código de status é 404 (nao encontrado) messagem de erro
         self.assertEqual(response.status_code, 404)
@@ -106,10 +111,13 @@ class UpdateTaskTest(TestCase):
 
     def test_update_task_not_owner(self):
         
-        # Fazendo login do 2 usuario
-        self.client.login(username='test2@example.com', password='password!123')
+         # Obtenha um token JWT para o usuário 2
+        refresh = RefreshToken.for_user(self.user_secondary)
+        self.access_token = str(refresh.access_token)
+        # Configurar o cabeçalho de autorização com o token JWT para todos os testes
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.access_token)
 
-        response = self.client.put(reverse('update-task',kwargs={'task_id': self.task.id}), data=data_task, content_type='application/json')
+        response = self.client.put(reverse('update-task',kwargs={'task_id': self.task.id}), data=data_task)
         
         # Verificar se o código de status é 404 (não encontrado) messagem de erro
         self.assertEqual(response.status_code, 404)

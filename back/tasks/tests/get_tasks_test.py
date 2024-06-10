@@ -1,15 +1,15 @@
 from django.test import TestCase
 from django.urls import reverse
-from django.test import Client
 from django.contrib.auth.models import User
 from tasks.models import Task
-
+from rest_framework.test import APIClient
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class GetTaskTest(TestCase):
     def setUp(self) -> None:
         """Cria um usuário e faz login e cria uma tarefa"""
-        self.client = Client()
+        self.client = APIClient()
         self.user_primary = User.objects.create_user(
             first_name='John Doe',
             username='test@example.com',
@@ -23,6 +23,12 @@ class GetTaskTest(TestCase):
             execute_date='2030-01-01',
             category='work',
             user=self.user_primary)
+        
+        # Obtenha um token JWT para o usuário
+        refresh = RefreshToken.for_user(self.user_primary)
+        self.access_token = str(refresh.access_token)
+        # Configurar o cabeçalho de autorização com o token JWT para todos os testes
+        self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + self.access_token)
         
     def test_get_tasks(self):
         """Retorna uma lista de tarefas do usuario logado"""
