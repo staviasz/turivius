@@ -2,11 +2,7 @@
 import { render, screen } from '@testing-library/react';
 import ButtonEdit from '.';
 
-jest.mock('next/image', () => ({
-  __esModule: true,
-  // Aqui replicamos apenas o comportamento necessário para o teste
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
-}));
+jest.mock('next/image');
 
 describe('<ButtonEdit/>', () => {
   it('should render', () => {

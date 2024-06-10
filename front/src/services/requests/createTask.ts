@@ -8,12 +8,9 @@ export default async function createTasks(
   body: Task,
 ): Promise<HttpResponse> {
   try {
-    console.log(jwtToken);
-
     const response = await httpClient.request('/task', {
       method: 'POST',
       headers: {
-        // 'X-CSRF-Token': csrfToken,
         Authorization: `Bearer ${jwtToken}`,
       },
       body,

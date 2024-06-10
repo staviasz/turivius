@@ -3,18 +3,12 @@ import RegisterForm from '.';
 export default {
   title: 'RegisterForm',
   component: RegisterForm,
-  args: {
-    children: 'nao sei',
-  },
-  argTypes: {
-    children: { type: 'string' },
-  },
 };
 
-export const Template = (args: ArgTypes) => {
+export const Template = () => {
   return (
     <div>
-      <RegisterForm {...args} />
+      <RegisterForm />
     </div>
   );
 };

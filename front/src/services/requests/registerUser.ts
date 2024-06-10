@@ -6,14 +6,11 @@ export default async function registerUser(
   httpClient: HttpClient,
   body: ISignUp,
 ): Promise<HttpResponse> {
-  console.log(body);
-
   try {
     const response = await httpClient.request('/user/register', {
       method: 'POST',
       body,
     });
-    console.log(response);
 
     return response;
   } catch (error) {

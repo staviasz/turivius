@@ -17,14 +17,6 @@ export class FetchAdapter implements HttpClient {
 
       if (!response.ok) {
         const body = await response.json();
-        console.log(body);
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-        console.log();
-
         throw new ErrorApi(body, response.status, response.statusText);
       }
       return {
@@ -32,11 +24,10 @@ export class FetchAdapter implements HttpClient {
         body: await response.json(),
       };
     } catch (error) {
-      console.log(error);
-
       if (error instanceof ErrorApi) {
         throw error;
       }
+      throw new ErrorApi(error, 500);
     }
   }
 }

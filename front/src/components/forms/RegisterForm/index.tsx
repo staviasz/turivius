@@ -25,8 +25,6 @@ export default function RegisterForm() {
   });
 
   const submitHandler: SubmitHandler<ISignUp> = async (data: ISignUp) => {
-    // eslint-disable-next-line no-console
-    console.log(data);
     try {
       await makeRegister(data);
       router.push('/login');

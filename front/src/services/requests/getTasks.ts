@@ -13,7 +13,6 @@ export default async function getTasks(
         Authorization: `Bearer ${jwtToken}`,
       },
     });
-    console.log(response);
 
     return response;
   } catch (error) {

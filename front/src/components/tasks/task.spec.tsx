@@ -8,7 +8,7 @@ jest.mock('../forms/fields/CustonCheckedBox');
 
 describe('<Task/>', () => {
   it('should render', () => {
-    render(<Task tasks={tasks} />);
+    render(<Task />);
     const select = screen.getByRole('combobox');
     expect(select).toBeInTheDocument();
 
@@ -18,7 +18,7 @@ describe('<Task/>', () => {
   });
 
   it('should render correct options in select', () => {
-    render(<Task tasks={tasks} />);
+    render(<Task />);
     expect(screen.getByRole('option', { name: 'Todas as atividades' })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: 'Concluidas' })).toBeInTheDocument();
 

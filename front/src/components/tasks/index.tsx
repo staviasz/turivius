@@ -18,10 +18,6 @@ export default function Task() {
   const [isTask, setIsTask] = useState<Task[]>(tasks);
   const [selected, setSelected] = useState('all tasks');
 
-  console.log(tasks);
-
-  console.log(isTask);
-
   useEffect(() => {
     if (selected === 'all tasks') {
       const tasksToDo = tasks.filter(task => task.completed === false);

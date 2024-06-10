@@ -11,7 +11,6 @@ export default async function loginUser(
       method: 'POST',
       body,
     });
-    console.log(response);
 
     return response;
   } catch (error) {

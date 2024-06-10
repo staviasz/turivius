@@ -29,8 +29,6 @@ export default function LoginForm() {
       redirect: false,
     });
 
-    console.log(response);
-
     if (!response?.ok) {
       setErrosApi('credenciais inválidas');
       return;

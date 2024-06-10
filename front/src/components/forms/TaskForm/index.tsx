@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import ButtonDanger from '@/components/buttons/ButtonDanger';
@@ -54,7 +55,6 @@ export default function TaskForm() {
 
   const submitHandler: SubmitHandler<Task> = async (data, event) => {
     data.category = Object.entries(categories).find(
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       ([_, val]) => val === selected,
     )?.[0] as Category;
     data.execute_date = data.executeDate;

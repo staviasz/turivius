@@ -20,9 +20,7 @@ export const makeClientAndToken = async (token?: string): Promise<makeClientAndT
 
     csrfToken = token;
     jwtToken = access_token;
-    console.log(access_token);
   } catch (error) {}
-  console.log(jwtToken);
 
   return { httpClient, csrfToken, jwtToken };
 };
