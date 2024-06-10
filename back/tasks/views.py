@@ -7,7 +7,6 @@ from .models import Task  # Se você tiver um modelo Task
 class TaskView(APIView):
     def post(self, request):
         serializer = TaskSerializer(data=request.data)
-        print("post request",request.data)
         # Crie a tarefa usando os dados validados
         if serializer.is_valid():
             validated_data = serializer.validated_data
@@ -55,7 +54,6 @@ class TaskView(APIView):
 
     def get(self, request):
         """Retorna todas as tarefas do usuário"""
-        print(request.user)
         user = request.user
 
         tasks = Task.objects.filter(user=user)

@@ -9,7 +9,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 class UserRegisterView(APIView):
     def post(self, request):
-        print(request)
         serializer = UserRegisterSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['email']
@@ -27,7 +26,6 @@ class UserRegisterView(APIView):
 
 class UserLoginView(APIView):
     def post(self, request):
-        print(request.data)
         serializer = UserLoginSerializer(data=request.data)
         if serializer.is_valid():
             email = serializer.validated_data['email']
@@ -36,7 +34,6 @@ class UserLoginView(APIView):
             
             if user:
                 django_login(request, user)
-                print("esta autenticado no login",request.user.is_authenticated)
                 user_data = {
                     "id": user.id,
                     "first_name": user.first_name,
@@ -44,7 +41,7 @@ class UserLoginView(APIView):
                 }
                 csrf_token = get_token(request)
 
-                refresh = RefreshToken.for_user(user)  # Gerar um token de atualização
+                refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token) 
                 
                 return Response({
